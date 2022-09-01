@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "260439982805",
+    "project_id": "simple-to-do-app-busy-me",
+    "storage_bucket": "simple-to-do-app-busy-me.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:260439982805:android:564317097554f388f6d85c",
+        "android_client_info": {
+          "package_name": "com.theostad.simple_to_do_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "260439982805-lusprio2vjkr2r1ns4pnffc0kombigkj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCn8cMO5npcM2FmYuJUgUg7Nb6iuzOIoFc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "260439982805-lusprio2vjkr2r1ns4pnffc0kombigkj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
