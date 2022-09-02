@@ -88,6 +88,7 @@ class HomePageCubit extends Cubit<HomePageState> {
   Future<void> changeCheckBoxValue(
       {required bool newcheckboxValue, required String documentID}) async {
     try {
+      await Future.delayed(Duration(milliseconds: 100));
       _itemsRepository.changeCheckBoxValue(newcheckboxValue, documentID);
     } catch (error) {
       emit(
