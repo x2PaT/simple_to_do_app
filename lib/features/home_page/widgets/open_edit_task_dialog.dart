@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 Future<void> openEditTaskDialog(BuildContext context, String title,
-    {required Null Function(String taskText) onTaskTextEdit}) {
+    {required Null Function(String taskText) onTaskTitleSubmit}) {
   final taskController = TextEditingController(text: title);
   return showDialog(
     context: context,
@@ -10,7 +10,7 @@ Future<void> openEditTaskDialog(BuildContext context, String title,
       content: TextField(
         textCapitalization: TextCapitalization.words,
         onSubmitted: (value) {
-          onTaskTextEdit(taskController.text);
+          onTaskTitleSubmit(taskController.text);
           Navigator.pop(context);
         },
         autofocus: true,
@@ -30,7 +30,7 @@ Future<void> openEditTaskDialog(BuildContext context, String title,
                 ),
               );
             } else {
-              onTaskTextEdit(taskController.text);
+              onTaskTitleSubmit(taskController.text);
               Navigator.pop(context);
             }
           },

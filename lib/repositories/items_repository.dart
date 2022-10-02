@@ -3,11 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:simple_to_do_app/models/text_card_model.dart';
 
 class ItemsRepository {
-  Stream<List<CardModel>> getItemStream() {
+  Stream<List<TaskModel>> getItemStream() {
     final userID = FirebaseAuth.instance.currentUser?.uid;
     if (userID == null) {
       throw Exception('User is not loged in');
     }
+    print('Test');
+
     return FirebaseFirestore.instance
         .collection('users')
         .doc(userID)
@@ -16,7 +18,20 @@ class ItemsRepository {
         .snapshots()
         .map((querySnapshot) {
       return querySnapshot.docs.map((doc) {
-        return CardModel.fromJson(doc);
+        // if (doc['description'].lenght >= 0) {
+        // print('Add description field');
+        // final description = {'description': ''};
+        // FirebaseFirestore.instance
+        //     .collection('users')
+        //     .doc(userID)
+        //     .collection('items')
+        //     .doc(doc.id)
+        //     .set(description, SetOptions(merge: true));
+        // } else {
+        //   print('Description field already exist'.length < 0 );
+        // }
+
+        return TaskModel.fromJson(doc);
       }).toList();
     });
   }
@@ -64,8 +79,8 @@ class ItemsRepository {
         .delete();
   }
 
-  void changeTaskText(String newTaskText, String documentID) {
-    final data = {'title': newTaskText};
+  void changeTaskTitle(String newTaskTitle, String documentID) {
+    final title = {'title': newTaskTitle};
     final userID = FirebaseAuth.instance.currentUser?.uid;
     if (userID == null) {
       throw Exception('User is not loged in');
@@ -75,6 +90,20 @@ class ItemsRepository {
         .doc(userID)
         .collection('items')
         .doc(documentID)
-        .set(data, SetOptions(merge: true));
+        .set(title, SetOptions(merge: true));
+  }
+
+  void changeTaskDescription(String newTaskDescription, String documentID) {
+    final description = {'description': newTaskDescription};
+    final userID = FirebaseAuth.instance.currentUser?.uid;
+    if (userID == null) {
+      throw Exception('User is not loged in');
+    }
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(userID)
+        .collection('items')
+        .doc(documentID)
+        .set(description, SetOptions(merge: true));
   }
 }

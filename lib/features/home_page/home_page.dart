@@ -66,7 +66,7 @@ class HomePage extends StatelessWidget {
                           itemCount: state.results.length,
                           itemBuilder: (context, index) {
                             var model = state.results[index];
-                            return MainListItem(model: model);
+                            return MainListItem(taskModel: model);
                           }),
                     )
                   ],

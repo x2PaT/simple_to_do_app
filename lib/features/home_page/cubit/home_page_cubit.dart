@@ -36,7 +36,7 @@ class HomePageCubit extends Cubit<HomePageState> {
           emit(
             HomePageState(
               status: Status.error,
-              errorMessage: error.toString(),
+              errorMessage: 'init error: ${error.toString()}',
             ),
           );
         },
@@ -50,7 +50,7 @@ class HomePageCubit extends Cubit<HomePageState> {
       emit(
         HomePageState(
           status: Status.error,
-          errorMessage: error.toString(),
+          errorMessage: 'addItem error ${error.toString()}',
         ),
       );
     }
@@ -71,10 +71,24 @@ class HomePageCubit extends Cubit<HomePageState> {
     }
   }
 
-  Future<void> editItem(
+  Future<void> editTaskTitle(
       {required String newTaskText, required String documentID}) async {
     try {
-      _itemsRepository.changeTaskText(newTaskText, documentID);
+      _itemsRepository.changeTaskTitle(newTaskText, documentID);
+    } catch (error) {
+      emit(
+        HomePageState(
+          status: Status.error,
+          errorMessage: error.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> editTaskDescription(
+      {required String newTaskDescription, required String documentID}) async {
+    try {
+      _itemsRepository.changeTaskDescription(newTaskDescription, documentID);
     } catch (error) {
       emit(
         HomePageState(

@@ -1,38 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+
 import 'package:simple_to_do_app/features/home_page/cubit/home_page_cubit.dart';
-import 'package:simple_to_do_app/features/home_page/widgets/open_delete_task_dialog.dart';
-import 'package:simple_to_do_app/features/home_page/widgets/open_edit_task_dialog.dart';
 import 'package:simple_to_do_app/models/text_card_model.dart';
+import 'export_dialogs.dart';
 
 class MainListItem extends StatelessWidget {
   const MainListItem({
-    required this.model,
+    required this.taskModel,
     Key? key,
   }) : super(key: key);
 
-  final CardModel model;
+  final TaskModel taskModel;
 
   @override
   Widget build(BuildContext context) {
     return Slidable(
       endActionPane: ActionPane(
-        extentRatio: 0.4,
+        extentRatio: 0.6,
         motion: const StretchMotion(),
         children: [
           SlidableAction(
             backgroundColor: Colors.green,
             icon: Icons.edit,
             label: 'Edit',
-            onPressed: (context) {
+            onPressed: (dialogContext) {
               openEditTaskDialog(
-                context,
-                model.title,
-                onTaskTextEdit: (String taskText) {
-                  context
-                      .read<HomePageCubit>()
-                      .editItem(newTaskText: taskText, documentID: model.id);
+                dialogContext,
+                taskModel.title,
+                onTaskTitleSubmit: (String taskText) {
+                  context.read<HomePageCubit>().editTaskTitle(
+                      newTaskText: taskText, documentID: taskModel.id);
+                },
+              );
+            },
+          ),
+          SlidableAction(
+            backgroundColor: Colors.blue,
+            icon: Icons.info,
+            label: 'Details',
+            onPressed: (dialogContext) {
+              showDetailsDialog(
+                dialogContext,
+                taskModel.title,
+                taskModel.description,
+                onTaskDescriptionSubmit: (String taskDescription) {
+                  context.read<HomePageCubit>().editTaskDescription(
+                      newTaskDescription: taskDescription,
+                      documentID: taskModel.id);
                 },
               );
             },
@@ -41,13 +57,13 @@ class MainListItem extends StatelessWidget {
             backgroundColor: Colors.red,
             icon: Icons.delete_forever,
             label: 'Delete',
-            onPressed: (context) {
+            onPressed: (dialogContext) {
               openDeleteTaskDialog(
-                context,
+                dialogContext,
                 onTaskDelete: () {
                   context
                       .read<HomePageCubit>()
-                      .removeItem(documentID: model.id);
+                      .removeItem(documentID: taskModel.id);
                 },
               );
             },
@@ -55,7 +71,18 @@ class MainListItem extends StatelessWidget {
         ],
       ),
       child: GestureDetector(
-        onTap: () {},
+        onTap: () {
+          showDetailsDialog(
+            context,
+            taskModel.title,
+            taskModel.description,
+            onTaskDescriptionSubmit: (String taskDescription) {
+              context.read<HomePageCubit>().editTaskDescription(
+                  newTaskDescription: taskDescription,
+                  documentID: taskModel.id);
+            },
+          );
+        },
         child: Card(
           margin: const EdgeInsets.all(10),
           child: Padding(
@@ -67,17 +94,17 @@ class MainListItem extends StatelessWidget {
                 Checkbox(
                   onChanged: (bool? value) {
                     context.read<HomePageCubit>().changeCheckBoxValue(
-                        newcheckboxValue: value!, documentID: model.id);
+                        newcheckboxValue: value!, documentID: taskModel.id);
                   },
-                  value: model.checked,
+                  value: taskModel.checked,
                 ),
                 Text(
-                  model.title,
+                  taskModel.title,
                   style: TextStyle(
-                    fontSize: model.checked ? 12 : null,
-                    fontWeight: !model.checked ? FontWeight.bold : null,
+                    fontSize: taskModel.checked ? 12 : null,
+                    fontWeight: !taskModel.checked ? FontWeight.bold : null,
                     decoration:
-                        model.checked ? TextDecoration.lineThrough : null,
+                        taskModel.checked ? TextDecoration.lineThrough : null,
                   ),
                 ),
               ],
