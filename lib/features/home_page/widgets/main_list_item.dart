@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:simple_to_do_app/features/home_page/cubit/home_page_cubit.dart';
 import 'package:simple_to_do_app/features/home_page/widgets/open_delete_task_dialog.dart';
 import 'package:simple_to_do_app/features/home_page/widgets/open_edit_task_dialog.dart';
@@ -15,59 +16,73 @@ class MainListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.all(10),
-      child: Padding(
-        padding: const EdgeInsets.only(
-          left: 25,
-          right: 15,
-        ),
-        child: Row(
-          children: [
-            Text(
-              model.title,
-              style: TextStyle(
-                fontSize: model.checked ? 12 : null,
-                fontWeight: !model.checked ? FontWeight.bold : null,
-                decoration: model.checked ? TextDecoration.lineThrough : null,
-              ),
+    return Slidable(
+      endActionPane: ActionPane(
+        extentRatio: 0.4,
+        motion: const StretchMotion(),
+        children: [
+          SlidableAction(
+            backgroundColor: Colors.green,
+            icon: Icons.edit,
+            label: 'Edit',
+            onPressed: (context) {
+              openEditTaskDialog(
+                context,
+                model.title,
+                onTaskTextEdit: (String taskText) {
+                  context
+                      .read<HomePageCubit>()
+                      .editItem(newTaskText: taskText, documentID: model.id);
+                },
+              );
+            },
+          ),
+          SlidableAction(
+            backgroundColor: Colors.red,
+            icon: Icons.delete_forever,
+            label: 'Delete',
+            onPressed: (context) {
+              openDeleteTaskDialog(
+                context,
+                onTaskDelete: () {
+                  context
+                      .read<HomePageCubit>()
+                      .removeItem(documentID: model.id);
+                },
+              );
+            },
+          ),
+        ],
+      ),
+      child: GestureDetector(
+        onTap: () {},
+        child: Card(
+          margin: const EdgeInsets.all(10),
+          child: Padding(
+            padding: const EdgeInsets.only(
+              left: 10,
             ),
-            const Spacer(),
-            IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: () {
-                openEditTaskDialog(
-                  context,
+            child: Row(
+              children: [
+                Checkbox(
+                  onChanged: (bool? value) {
+                    context.read<HomePageCubit>().changeCheckBoxValue(
+                        newcheckboxValue: value!, documentID: model.id);
+                  },
+                  value: model.checked,
+                ),
+                Text(
                   model.title,
-                  onTaskTextEdit: (String taskText) {
-                    context
-                        .read<HomePageCubit>()
-                        .editItem(newTaskText: taskText, documentID: model.id);
-                  },
-                );
-              },
+                  style: TextStyle(
+                    fontSize: model.checked ? 12 : null,
+                    fontWeight: !model.checked ? FontWeight.bold : null,
+                    decoration:
+                        model.checked ? TextDecoration.lineThrough : null,
+                  ),
+                ),
+              ],
             ),
-            IconButton(
-              icon: const Icon(Icons.delete_forever),
-              onPressed: () {
-                openDeleteTaskDialog(
-                  context,
-                  onTaskDelete: () {
-                    context
-                        .read<HomePageCubit>()
-                        .removeItem(documentID: model.id);
-                  },
-                );
-              },
-            ),
-            (Checkbox(
-              onChanged: (bool? value) {
-                context.read<HomePageCubit>().changeCheckBoxValue(
-                    newcheckboxValue: value!, documentID: model.id);
-              },
-              value: model.checked,
-            )),
-          ],
+          ),
         ),
       ),
     );
