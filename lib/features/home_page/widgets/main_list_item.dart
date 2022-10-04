@@ -4,7 +4,6 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 
 import 'package:simple_to_do_app/features/home_page/cubit/home_page_cubit.dart';
 import 'package:simple_to_do_app/models/text_card_model.dart';
-import 'package:simple_to_do_app/models/app_preferences.dart';
 import 'export_dialogs.dart';
 
 class MainListItem extends StatelessWidget {
@@ -27,14 +26,7 @@ class MainListItem extends StatelessWidget {
             icon: Icons.edit,
             label: 'Edit',
             onPressed: (dialogContext) {
-              openEditTaskDialog(
-                dialogContext,
-                taskModel.title,
-                onTaskTitleSubmit: (String taskText) {
-                  context.read<HomePageCubit>().editTaskTitle(
-                      newTaskText: taskText, documentID: taskModel.id);
-                },
-              );
+              openEditTaskDialog(context, taskModel);
             },
           ),
           SlidableAction(
@@ -42,16 +34,7 @@ class MainListItem extends StatelessWidget {
             icon: Icons.info,
             label: 'Details',
             onPressed: (dialogContext) {
-              showDetailsDialog(
-                dialogContext,
-                taskModel.title,
-                taskModel.description,
-                onTaskDescriptionSubmit: (String taskDescription) {
-                  context.read<HomePageCubit>().editTaskDescription(
-                      newTaskDescription: taskDescription,
-                      documentID: taskModel.id);
-                },
-              );
+              showDetailsDialog(context, taskModel);
             },
           ),
           SlidableAction(
@@ -59,44 +42,19 @@ class MainListItem extends StatelessWidget {
             icon: Icons.delete_forever,
             label: 'Delete',
             onPressed: (dialogContext) {
-              bool deleteConfir = context.read<AppPreferences>().deleteConfirm;
-              if (deleteConfir) {
-                openDeleteTaskDialog(
-                  dialogContext,
-                  onTaskDelete: () {
-                    context
-                        .read<HomePageCubit>()
-                        .removeItem(documentID: taskModel.id);
-                  },
-                );
-              } else {
-                context
-                    .read<HomePageCubit>()
-                    .removeItem(documentID: taskModel.id);
-              }
+              openDeleteTaskDialog(context, taskModel);
             },
           ),
         ],
       ),
       child: GestureDetector(
         onTap: () {
-          showDetailsDialog(
-            context,
-            taskModel.title,
-            taskModel.description,
-            onTaskDescriptionSubmit: (String taskDescription) {
-              context.read<HomePageCubit>().editTaskDescription(
-                  newTaskDescription: taskDescription,
-                  documentID: taskModel.id);
-            },
-          );
+          showDetailsDialog(context, taskModel);
         },
         child: Card(
           margin: const EdgeInsets.all(10),
           child: Padding(
-            padding: const EdgeInsets.only(
-              left: 10,
-            ),
+            padding: const EdgeInsets.only(left: 10, right: 20),
             child: Row(
               children: [
                 Checkbox(
@@ -115,6 +73,8 @@ class MainListItem extends StatelessWidget {
                         taskModel.checked ? TextDecoration.lineThrough : null,
                   ),
                 ),
+                Spacer(),
+                Icon(Icons.more_horiz),
               ],
             ),
           ),
