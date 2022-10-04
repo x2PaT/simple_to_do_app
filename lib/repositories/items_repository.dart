@@ -8,7 +8,6 @@ class ItemsRepository {
     if (userID == null) {
       throw Exception('User is not loged in');
     }
-    print('Test');
 
     return FirebaseFirestore.instance
         .collection('users')
@@ -18,18 +17,16 @@ class ItemsRepository {
         .snapshots()
         .map((querySnapshot) {
       return querySnapshot.docs.map((doc) {
-        // if (doc['description'].lenght >= 0) {
-        // print('Add description field');
-        // final description = {'description': ''};
-        // FirebaseFirestore.instance
-        //     .collection('users')
-        //     .doc(userID)
-        //     .collection('items')
-        //     .doc(doc.id)
-        //     .set(description, SetOptions(merge: true));
-        // } else {
-        //   print('Description field already exist'.length < 0 );
-        // }
+        if (doc['description'] == null) {
+          print('Add description field');
+          final description = {'description': ''};
+          FirebaseFirestore.instance
+              .collection('users')
+              .doc(userID)
+              .collection('items')
+              .doc(doc.id)
+              .set(description, SetOptions(merge: true));
+        } else {}
 
         return TaskModel.fromJson(doc);
       }).toList();
@@ -50,7 +47,7 @@ class ItemsRepository {
         .set(data, SetOptions(merge: true));
   }
 
-  Future<void> addNewTask(String task) async {
+  Future<void> addNewTask(String task, String description) async {
     final userID = FirebaseAuth.instance.currentUser?.uid;
     if (userID == null) {
       throw Exception('User is not loged in');
@@ -63,6 +60,7 @@ class ItemsRepository {
       'checked': false,
       'title': task,
       'type': 'card',
+      'description': description,
     });
   }
 

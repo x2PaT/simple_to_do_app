@@ -43,9 +43,9 @@ class HomePageCubit extends Cubit<HomePageState> {
       );
   }
 
-  Future<void> addItem(String task) async {
+  Future<void> addItem(String task, String description) async {
     try {
-      await _itemsRepository.addNewTask(task);
+      await _itemsRepository.addNewTask(task, description);
     } catch (error) {
       emit(
         HomePageState(
@@ -102,7 +102,7 @@ class HomePageCubit extends Cubit<HomePageState> {
   Future<void> changeCheckBoxValue(
       {required bool newcheckboxValue, required String documentID}) async {
     try {
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
       _itemsRepository.changeCheckBoxValue(newcheckboxValue, documentID);
     } catch (error) {
       emit(

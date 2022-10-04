@@ -9,7 +9,7 @@ Future<dynamic> showDetailsDialog(BuildContext context, title, description,
     builder: (context) {
       return AlertDialog(
         title: Text(title, textAlign: TextAlign.center),
-        content: Container(
+        content: SizedBox(
           width: double.infinity,
           height: 300,
           child: Column(

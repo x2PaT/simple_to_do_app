@@ -4,6 +4,7 @@ import 'package:simple_to_do_app/features/home_page/cubit/home_page_cubit.dart';
 import 'package:simple_to_do_app/features/home_page/widgets/main_list_item.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:simple_to_do_app/features/home_page/widgets/open_add_task_dialog.dart';
+import 'package:simple_to_do_app/features/settings_page/settings_page.dart';
 import 'package:simple_to_do_app/features/user_profile/user_profile.dart';
 import 'package:simple_to_do_app/repositories/items_repository.dart';
 
@@ -42,7 +43,7 @@ class HomePage extends StatelessWidget {
                   child: const Icon(Icons.add),
                   onPressed: () {
                     openAddTaskDialog(context, onTaskTextChange: (task) {
-                      context.read<HomePageCubit>().addItem(task);
+                      context.read<HomePageCubit>().addItem(task, '');
                     });
                   },
                 ),
@@ -52,11 +53,19 @@ class HomePage extends StatelessWidget {
                     IconButton(
                       onPressed: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => UserProfile(),
+                          builder: (context) => const UserProfile(),
                         ));
                       },
-                      icon: Icon(Icons.person),
-                    )
+                      icon: const Icon(Icons.person),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const SettingsPage(),
+                        ));
+                      },
+                      icon: const Icon(Icons.settings),
+                    ),
                   ],
                 ),
                 body: Column(
