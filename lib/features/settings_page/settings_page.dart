@@ -23,10 +23,6 @@ class _SettingsPageState extends State<SettingsPage> {
             child: ListView(
               children: [
                 sectionName(context, Icons.person, 'Account'),
-                buildDialogOption(context, 'Dart theme'),
-                buildDialogOption(context, 'Show delete confirmation'),
-                buildDialogOption(context, 'Third option'),
-                sectionName(context, Icons.volume_up_outlined, 'Notification'),
                 buildSwitchOption(context, 'Dark Theme', 'darkTheme'),
                 buildSwitchOption(
                     context, 'Delete Confirmation', 'deleteConfirm'),

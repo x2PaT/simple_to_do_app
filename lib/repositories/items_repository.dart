@@ -17,8 +17,11 @@ class ItemsRepository {
         .snapshots()
         .map((querySnapshot) {
       return querySnapshot.docs.map((doc) {
-        if (doc['description'] == null) {
-          print('Add description field');
+        try {
+          doc['description'];
+          print('Doc description ${doc.id} ${doc['description']}');
+        } catch (e) {
+          print('Doc description ${doc.id} doesnt exist');
           final description = {'description': ''};
           FirebaseFirestore.instance
               .collection('users')
@@ -26,7 +29,7 @@ class ItemsRepository {
               .collection('items')
               .doc(doc.id)
               .set(description, SetOptions(merge: true));
-        } else {}
+        }
 
         return TaskModel.fromJson(doc);
       }).toList();

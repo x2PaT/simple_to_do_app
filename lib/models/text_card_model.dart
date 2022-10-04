@@ -12,9 +12,8 @@ class TaskModel {
   final bool checked;
   final String title;
   final String description;
-  TaskModel.fromJson(
-    json,
-  )   : id = json.id,
+  TaskModel.fromJson(json)
+      : id = json.id,
         type = json['type'],
         checked = json['checked'],
         title = json['title'],
