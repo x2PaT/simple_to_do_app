@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:simple_to_do_app/features/home_page/cubit/home_page_cubit.dart';
+import 'package:simple_to_do_app/models/text_card_model.dart';
 
-Future<void> openEditTaskDialog(BuildContext context, String title,
-    {required Null Function(String taskText) onTaskTextEdit}) {
-  final taskController = TextEditingController(text: title);
+Future<void> openEditTaskDialog(
+  BuildContext context,
+  TaskModel taskModel,
+) {
+  final taskController = TextEditingController(text: taskModel.title);
   return showDialog(
     context: context,
-    builder: (context) => AlertDialog(
+    builder: (contextBuilder) => AlertDialog(
       title: const Text('Edit task', textAlign: TextAlign.center),
       content: TextField(
         textCapitalization: TextCapitalization.words,
         onSubmitted: (value) {
-          onTaskTextEdit(taskController.text);
-          Navigator.pop(context);
+          submit(context, taskController.text, taskModel);
         },
         autofocus: true,
         controller: taskController,
@@ -20,23 +24,30 @@ Future<void> openEditTaskDialog(BuildContext context, String title,
       actions: [
         TextButton(
           onPressed: () {
-            if (taskController.text.isEmpty) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    'Task can not be empty',
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              );
-            } else {
-              onTaskTextEdit(taskController.text);
-              Navigator.pop(context);
-            }
+            submit(context, taskController.text, taskModel);
           },
           child: const Text('Edit'),
         )
       ],
     ),
   );
+}
+
+void submit(BuildContext context, newTaskTitle, TaskModel taskModel) {
+  if (newTaskTitle.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Task can not be empty',
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  } else {
+    context.read<HomePageCubit>().editTaskTitle(
+          newTaskText: newTaskTitle,
+          documentID: taskModel.id,
+        );
+    Navigator.pop(context);
+  }
 }
