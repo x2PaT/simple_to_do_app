@@ -9,7 +9,7 @@ class ItemsRepository {
       throw Exception('User is not loged in');
     }
 
-    return FirebaseFirestore.instance
+    Stream<List<TaskModel>> result = FirebaseFirestore.instance
         .collection('users')
         .doc(userID)
         .collection('items')
@@ -17,23 +17,11 @@ class ItemsRepository {
         .snapshots()
         .map((querySnapshot) {
       return querySnapshot.docs.map((doc) {
-        try {
-          doc['description'];
-          print('Doc description ${doc.id} ${doc['description']}');
-        } catch (e) {
-          print('Doc description ${doc.id} doesnt exist');
-          final description = {'description': ''};
-          FirebaseFirestore.instance
-              .collection('users')
-              .doc(userID)
-              .collection('items')
-              .doc(doc.id)
-              .set(description, SetOptions(merge: true));
-        }
-
         return TaskModel.fromJson(doc);
       }).toList();
     });
+
+    return result;
   }
 
   void changeCheckBoxValue(bool newcheckboxValue, String documentID) {
@@ -62,7 +50,6 @@ class ItemsRepository {
         .add({
       'checked': false,
       'title': task,
-      'type': 'card',
       'description': description,
     });
   }

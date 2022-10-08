@@ -13,6 +13,7 @@ class HomePageCubit extends Cubit<HomePageState> {
   ) : super(const HomePageState());
 
   StreamSubscription? _streamSubscription;
+  // StreamSubscription? _streamSubscription2;
   final ItemsRepository _itemsRepository;
 
   Future<void> start() async {
@@ -113,8 +114,6 @@ class HomePageCubit extends Cubit<HomePageState> {
       );
     }
   }
-
-// edit item
 
   @override
   Future<void> close() {
