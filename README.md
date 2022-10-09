@@ -17,8 +17,3 @@ samples, guidance on mobile development, and a full API reference.
 
 
 
-
-Add checkbox onChange logic
-Add add task dialog 
-Add delete dialog 
-Add edit task text

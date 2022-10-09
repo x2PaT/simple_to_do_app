@@ -146,7 +146,6 @@ class HomePageCubit extends Cubit<HomePageState> {
       );
     }
   }
-
   @override
   Future<void> close() {
     _streamSubscription?.cancel();
