@@ -4,11 +4,13 @@ part of 'home_page_cubit.dart';
 class HomePageState {
   const HomePageState({
     this.results = const [],
+    this.listOrder = const [],
     this.status = Status.initial,
     this.errorMessage,
   });
 
-  final List results;
+  final List<TaskModel> results;
+  final List listOrder;
   final Status status;
   final String? errorMessage;
 }

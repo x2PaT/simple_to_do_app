@@ -6,13 +6,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:simple_to_do_app/features/home_page/widgets/open_add_task_dialog.dart';
 import 'package:simple_to_do_app/features/settings_page/settings_page.dart';
 import 'package:simple_to_do_app/features/user_profile/user_profile.dart';
+import 'package:simple_to_do_app/models/text_card_model.dart';
 import 'package:simple_to_do_app/repositories/items_repository.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({
     Key? key,
   }) : super(key: key);
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -30,14 +36,19 @@ class HomePage extends StatelessWidget {
                 child: CircularProgressIndicator(),
               );
             case Status.error:
-              return Center(
-                child: Text(
-                  state.errorMessage ?? 'Unkown error',
-                  style: const TextStyle(fontSize: 22),
+              return Container(
+                decoration: const BoxDecoration(color: Colors.black),
+                child: Center(
+                  child: Text(
+                    state.errorMessage ?? 'Unkown error',
+                    style: const TextStyle(fontSize: 18),
+                  ),
                 ),
               );
 
             case Status.success:
+              List<TaskModel> items = state.results;
+
               return Scaffold(
                 floatingActionButton: FloatingActionButton(
                   child: const Icon(Icons.add),
@@ -71,12 +82,23 @@ class HomePage extends StatelessWidget {
                 body: Column(
                   children: [
                     Expanded(
-                      child: ListView.builder(
-                          itemCount: state.results.length,
-                          itemBuilder: (context, index) {
-                            var model = state.results[index];
-                            return MainListItem(taskModel: model);
-                          }),
+                      child: ReorderableListView.builder(
+                        itemCount: state.results.length,
+                        itemBuilder: (context, index) {
+                          var model = items[index];
+                          return MainListItem(
+                              key: ValueKey(model), taskModel: model);
+                        },
+                        onReorder: (int oldIndex, int newIndex) {
+                          setState(() {
+                            if (newIndex > oldIndex) newIndex--;
+                            final item = items.removeAt(oldIndex);
+                            items.insert(newIndex, item);
+
+                            context.read<HomePageCubit>().changeOrder(items);
+                          });
+                        },
+                      ),
                     )
                   ],
                 ),

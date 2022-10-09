@@ -1,39 +1,53 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:simple_to_do_app/models/text_card_model.dart';
 
 class ItemsRepository {
+  String generateID() {
+    int minRange = 0xFF0087D8;
+    int maxRange = 0xFFFF87D8;
+    final int randomInt = Random().nextInt((minRange - maxRange).abs() + 1) +
+        min(maxRange, minRange);
+
+    return randomInt.toRadixString(16);
+  }
+
+
   Stream<List<TaskModel>> getItemStream() {
     final userID = FirebaseAuth.instance.currentUser?.uid;
     if (userID == null) {
       throw Exception('User is not loged in');
     }
 
-    return FirebaseFirestore.instance
+    Stream<List<TaskModel>> result = FirebaseFirestore.instance
         .collection('users')
         .doc(userID)
         .collection('items')
-        .orderBy('checked')
         .snapshots()
         .map((querySnapshot) {
       return querySnapshot.docs.map((doc) {
-        try {
-          doc['description'];
-          print('Doc description ${doc.id} ${doc['description']}');
-        } catch (e) {
-          print('Doc description ${doc.id} doesnt exist');
-          final description = {'description': ''};
-          FirebaseFirestore.instance
-              .collection('users')
-              .doc(userID)
-              .collection('items')
-              .doc(doc.id)
-              .set(description, SetOptions(merge: true));
-        }
-
         return TaskModel.fromJson(doc);
       }).toList();
     });
+
+    return result;
+  }
+
+  Future<List> getOrder() async {
+    final userID = FirebaseAuth.instance.currentUser?.uid;
+    if (userID == null) {
+      throw Exception('User is not loged in');
+    }
+
+    final data = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userID)
+        .get()
+        .then((DocumentSnapshot doc) => doc.data() as Map<String, dynamic>);
+
+    return data['order'] as List;
   }
 
   void changeCheckBoxValue(bool newcheckboxValue, String documentID) {
@@ -55,15 +69,20 @@ class ItemsRepository {
     if (userID == null) {
       throw Exception('User is not loged in');
     }
-    await FirebaseFirestore.instance
+    final data = {
+      'checked': false,
+      'title': task,
+      'description': description,
+    };
+
+    final newTask = await FirebaseFirestore.instance
         .collection('users')
         .doc(userID)
         .collection('items')
-        .add({
-      'checked': false,
-      'title': task,
-      'type': 'card',
-      'description': description,
+        .add(data);
+
+    await FirebaseFirestore.instance.collection('users').doc(userID).update({
+      'order': FieldValue.arrayUnion([newTask.id])
     });
   }
 
@@ -80,7 +99,7 @@ class ItemsRepository {
         .delete();
   }
 
-  void changeTaskTitle(String newTaskTitle, String documentID) {
+  void editTaskTitle(String newTaskTitle, String documentID) {
     final title = {'title': newTaskTitle};
     final userID = FirebaseAuth.instance.currentUser?.uid;
     if (userID == null) {
@@ -94,7 +113,7 @@ class ItemsRepository {
         .set(title, SetOptions(merge: true));
   }
 
-  void changeTaskDescription(String newTaskDescription, String documentID) {
+  void editTaskDescription(String newTaskDescription, String documentID) {
     final description = {'description': newTaskDescription};
     final userID = FirebaseAuth.instance.currentUser?.uid;
     if (userID == null) {
@@ -106,5 +125,17 @@ class ItemsRepository {
         .collection('items')
         .doc(documentID)
         .set(description, SetOptions(merge: true));
+  }
+
+  Future<void> reorderTasks(List newOrder) async {
+    final data = {'order': newOrder};
+    final userID = FirebaseAuth.instance.currentUser?.uid;
+    if (userID == null) {
+      throw Exception('User is not loged in');
+    }
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userID)
+        .set(data, SetOptions(merge: true));
   }
 }
