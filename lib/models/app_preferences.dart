@@ -10,6 +10,7 @@ ThemeData lightThemeValues = ThemeData(
 ThemeData darkThemeValues = ThemeData(
   brightness: Brightness.dark,
   primarySwatch: Colors.blue,
+  // ignore: deprecated_member_use
   accentColor: Colors.red,
   scaffoldBackgroundColor: Colors.black87,
 );
@@ -48,7 +49,6 @@ class AppPreferences with ChangeNotifier {
 
     _saveSettingsOptionToPreference(optionName, newValue);
     notifyListeners();
-    print('Option $optionName changes to $newValue');
   }
 
   _saveSettingsOptionToPreference(String optionName, bool newValue) async {

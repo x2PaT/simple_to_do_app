@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
               );
             case Status.error:
               return Container(
-                decoration: BoxDecoration(color: Colors.black),
+                decoration: const BoxDecoration(color: Colors.black),
                 child: Center(
                   child: Text(
                     state.errorMessage ?? 'Unkown error',
