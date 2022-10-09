@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -48,7 +50,6 @@ class AppPreferences with ChangeNotifier {
 
     _saveSettingsOptionToPreference(optionName, newValue);
     notifyListeners();
-    print('Option $optionName changes to $newValue');
   }
 
   _saveSettingsOptionToPreference(String optionName, bool newValue) async {

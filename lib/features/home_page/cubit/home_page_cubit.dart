@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:simple_to_do_app/core/enums.dart';
+import 'package:simple_to_do_app/models/text_card_model.dart';
 import 'package:simple_to_do_app/repositories/items_repository.dart';
 
 part 'home_page_state.dart';
@@ -23,11 +24,24 @@ class HomePageCubit extends Cubit<HomePageState> {
       ),
     );
 
+    final idsOrder = await _itemsRepository.getOrder();
+
     _streamSubscription = _itemsRepository.getItemStream().listen(
       (items) {
+        //reorder items acording to idsOrder List
+        List<TaskModel> orderedResult = [];
+
+        for (var id in idsOrder) {
+          for (var item in items) {
+            if (item.id == id) {
+              orderedResult.add(item);
+            }
+          }
+        }
+
         emit(
           HomePageState(
-            results: items,
+            results: orderedResult,
             status: Status.success,
           ),
         );
@@ -75,7 +89,7 @@ class HomePageCubit extends Cubit<HomePageState> {
   Future<void> editTaskTitle(
       {required String newTaskText, required String documentID}) async {
     try {
-      _itemsRepository.changeTaskTitle(newTaskText, documentID);
+      _itemsRepository.editTaskTitle(newTaskText, documentID);
     } catch (error) {
       emit(
         HomePageState(
@@ -89,7 +103,7 @@ class HomePageCubit extends Cubit<HomePageState> {
   Future<void> editTaskDescription(
       {required String newTaskDescription, required String documentID}) async {
     try {
-      _itemsRepository.changeTaskDescription(newTaskDescription, documentID);
+      _itemsRepository.editTaskDescription(newTaskDescription, documentID);
     } catch (error) {
       emit(
         HomePageState(
@@ -105,6 +119,24 @@ class HomePageCubit extends Cubit<HomePageState> {
     try {
       await Future.delayed(const Duration(milliseconds: 100));
       _itemsRepository.changeCheckBoxValue(newcheckboxValue, documentID);
+    } catch (error) {
+      emit(
+        HomePageState(
+          status: Status.error,
+          errorMessage: error.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> changeOrder(List<TaskModel> items) async {
+    List newOrder = [];
+    for (var element in items) {
+      newOrder.add(element.id);
+    }
+
+    try {
+      await _itemsRepository.reorderTasks(newOrder);
     } catch (error) {
       emit(
         HomePageState(

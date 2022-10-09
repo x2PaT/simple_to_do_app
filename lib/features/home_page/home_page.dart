@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:simple_to_do_app/features/home_page/widgets/open_add_task_dialog.dart';
 import 'package:simple_to_do_app/features/settings_page/settings_page.dart';
 import 'package:simple_to_do_app/features/user_profile/user_profile.dart';
+import 'package:simple_to_do_app/models/text_card_model.dart';
 import 'package:simple_to_do_app/repositories/items_repository.dart';
 
 class HomePage extends StatefulWidget {
@@ -28,7 +29,6 @@ class _HomePageState extends State<HomePage> {
       },
       child: BlocBuilder<HomePageCubit, HomePageState>(
         builder: (context, state) {
-          final items = state.results;
           switch (state.status) {
             case Status.initial:
             case Status.loading:
@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
               );
             case Status.error:
               return Container(
-                decoration: BoxDecoration(color: Colors.black),
+                decoration: const BoxDecoration(color: Colors.black),
                 child: Center(
                   child: Text(
                     state.errorMessage ?? 'Unkown error',
@@ -47,6 +47,8 @@ class _HomePageState extends State<HomePage> {
               );
 
             case Status.success:
+              List<TaskModel> items = state.results;
+
               return Scaffold(
                 floatingActionButton: FloatingActionButton(
                   child: const Icon(Icons.add),
@@ -93,7 +95,7 @@ class _HomePageState extends State<HomePage> {
                             final item = items.removeAt(oldIndex);
                             items.insert(newIndex, item);
 
-                            // context.read<HomePageCubit>().reorderList(items);
+                            context.read<HomePageCubit>().changeOrder(items);
                           });
                         },
                       ),
