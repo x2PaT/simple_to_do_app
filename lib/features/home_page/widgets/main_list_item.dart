@@ -4,6 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 
 import 'package:simple_to_do_app/features/home_page/cubit/home_page_cubit.dart';
+import 'package:simple_to_do_app/features/task_details/task_details_page.dart';
 import 'package:simple_to_do_app/models/text_card_model.dart';
 import 'export_dialogs.dart';
 
@@ -35,7 +36,9 @@ class MainListItem extends StatelessWidget {
             icon: Icons.info,
             label: 'Details',
             onPressed: (dialogContext) {
-              showDetailsDialog(context, taskModel);
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => DetailsPage(taskModel: taskModel),
+              ));
             },
           ),
           SlidableAction(
@@ -50,7 +53,9 @@ class MainListItem extends StatelessWidget {
       ),
       child: GestureDetector(
         onTap: () {
-          showDetailsDialog(context, taskModel);
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => DetailsPage(taskModel: taskModel),
+          ));
         },
         child: Card(
           margin: const EdgeInsets.all(10),
