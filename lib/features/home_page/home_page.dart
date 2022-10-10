@@ -29,7 +29,6 @@ class _HomePageState extends State<HomePage> {
       },
       child: BlocBuilder<HomePageCubit, HomePageState>(
         builder: (context, state) {
-          final items = state.results;
           switch (state.status) {
             case Status.initial:
             case Status.loading:

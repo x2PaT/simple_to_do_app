@@ -12,7 +12,6 @@ ThemeData lightThemeValues = ThemeData(
 ThemeData darkThemeValues = ThemeData(
   brightness: Brightness.dark,
   primarySwatch: Colors.blue,
-  // ignore: deprecated_member_use
   accentColor: Colors.red,
   scaffoldBackgroundColor: Colors.black87,
 );
