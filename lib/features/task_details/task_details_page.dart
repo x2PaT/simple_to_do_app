@@ -39,7 +39,7 @@ class DetailsPage extends StatelessWidget {
                     controller: titleController,
                     onSubmitted: (String taskTitle) {
                       context.read<HomePageCubit>().editTaskTitle(
-                          newTaskTitle: taskTitle, documentID: taskModel.id);
+                          editTaskTitle: taskTitle, documentID: taskModel.id);
                     },
                     decoration: const InputDecoration(
                       hintText: "Enter Title",
