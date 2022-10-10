@@ -14,7 +14,6 @@ class HomePageCubit extends Cubit<HomePageState> {
   ) : super(const HomePageState());
 
   StreamSubscription? _streamSubscription;
-  // StreamSubscription? _streamSubscription2;
   final ItemsRepository _itemsRepository;
 
   Future<void> start() async {
@@ -28,7 +27,6 @@ class HomePageCubit extends Cubit<HomePageState> {
 
     _streamSubscription = _itemsRepository.getItemStream().listen(
       (items) {
-        //reorder items acording to idsOrder List
         List<TaskModel> orderedResult = [];
 
         for (var id in idsOrder) {
@@ -61,6 +59,8 @@ class HomePageCubit extends Cubit<HomePageState> {
   Future<void> addItem(String task, String description) async {
     try {
       await _itemsRepository.addNewTask(task, description);
+
+      start();
     } catch (error) {
       emit(
         HomePageState(
@@ -75,6 +75,7 @@ class HomePageCubit extends Cubit<HomePageState> {
   Future<void> removeItem({required String documentID}) async {
     try {
       await _itemsRepository.deleteTask(documentID: documentID);
+      start();
     } catch (error) {
       emit(
         HomePageState(
@@ -90,6 +91,7 @@ class HomePageCubit extends Cubit<HomePageState> {
       {required String newTaskText, required String documentID}) async {
     try {
       _itemsRepository.editTaskTitle(newTaskText, documentID);
+      start();
     } catch (error) {
       emit(
         HomePageState(
@@ -104,6 +106,7 @@ class HomePageCubit extends Cubit<HomePageState> {
       {required String newTaskDescription, required String documentID}) async {
     try {
       _itemsRepository.editTaskDescription(newTaskDescription, documentID);
+      start();
     } catch (error) {
       emit(
         HomePageState(
@@ -119,6 +122,7 @@ class HomePageCubit extends Cubit<HomePageState> {
     try {
       await Future.delayed(const Duration(milliseconds: 100));
       _itemsRepository.changeCheckBoxValue(newcheckboxValue, documentID);
+      start();
     } catch (error) {
       emit(
         HomePageState(

@@ -14,7 +14,6 @@ class ItemsRepository {
     return randomInt.toRadixString(16);
   }
 
-
   Stream<List<TaskModel>> getItemStream() {
     final userID = FirebaseAuth.instance.currentUser?.uid;
     if (userID == null) {
@@ -66,6 +65,8 @@ class ItemsRepository {
 
   Future<void> addNewTask(String task, String description) async {
     final userID = FirebaseAuth.instance.currentUser?.uid;
+    final creationTime = DateTime.now();
+
     if (userID == null) {
       throw Exception('User is not loged in');
     }
@@ -73,6 +74,7 @@ class ItemsRepository {
       'checked': false,
       'title': task,
       'description': description,
+      'creationTime': creationTime.toString()
     };
 
     final newTask = await FirebaseFirestore.instance
@@ -86,17 +88,21 @@ class ItemsRepository {
     });
   }
 
-  Future<void> deleteTask({String? documentID}) {
+  Future<void> deleteTask({String? documentID}) async {
     final userID = FirebaseAuth.instance.currentUser?.uid;
     if (userID == null) {
       throw Exception('User is not loged in');
     }
-    return FirebaseFirestore.instance
+
+    await FirebaseFirestore.instance
         .collection('users')
         .doc(userID)
         .collection('items')
         .doc(documentID)
         .delete();
+    await FirebaseFirestore.instance.collection('users').doc(userID).update({
+      'order': FieldValue.arrayRemove([documentID])
+    });
   }
 
   void editTaskTitle(String newTaskTitle, String documentID) {

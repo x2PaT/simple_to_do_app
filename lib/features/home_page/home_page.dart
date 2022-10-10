@@ -29,12 +29,14 @@ class _HomePageState extends State<HomePage> {
       },
       child: BlocBuilder<HomePageCubit, HomePageState>(
         builder: (context, state) {
-          final items = state.results;
           switch (state.status) {
             case Status.initial:
             case Status.loading:
-              return const Center(
-                child: CircularProgressIndicator(),
+              return Container(
+                color: Colors.white,
+                child: const Center(
+                  child: CircularProgressIndicator(),
+                ),
               );
             case Status.error:
               return Container(

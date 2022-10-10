@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:intl/intl.dart';
 
 import 'package:simple_to_do_app/features/home_page/cubit/home_page_cubit.dart';
 import 'package:simple_to_do_app/models/text_card_model.dart';
@@ -64,14 +65,27 @@ class MainListItem extends StatelessWidget {
                   },
                   value: taskModel.checked,
                 ),
-                Text(
-                  taskModel.title,
-                  style: TextStyle(
-                    fontSize: taskModel.checked ? 12 : null,
-                    fontWeight: !taskModel.checked ? FontWeight.bold : null,
-                    decoration:
-                        taskModel.checked ? TextDecoration.lineThrough : null,
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      taskModel.title,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontSize: taskModel.checked ? 12 : null,
+                        fontWeight: !taskModel.checked ? FontWeight.bold : null,
+                        decoration: taskModel.checked
+                            ? TextDecoration.lineThrough
+                            : null,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      DateFormat('dd MMM yyyy - hh:mm:ss')
+                          .format(taskModel.creationTime),
+                      style: const TextStyle(fontSize: 12),
+                    )
+                  ],
                 ),
                 const Spacer(),
                 const Icon(Icons.more_horiz),
