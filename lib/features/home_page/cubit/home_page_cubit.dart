@@ -88,9 +88,9 @@ class HomePageCubit extends Cubit<HomePageState> {
   }
 
   Future<void> editTaskTitle(
-      {required String newTaskText, required String documentID}) async {
+      {required String editTaskTitle, required String documentID}) async {
     try {
-      _itemsRepository.editTaskTitle(newTaskText, documentID);
+      _itemsRepository.editTaskTitle(editTaskTitle, documentID);
       start();
     } catch (error) {
       emit(
@@ -150,6 +150,7 @@ class HomePageCubit extends Cubit<HomePageState> {
       );
     }
   }
+
   @override
   Future<void> close() {
     _streamSubscription?.cancel();
