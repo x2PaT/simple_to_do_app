@@ -45,7 +45,7 @@ void submit(BuildContext context, newTaskTitle, TaskModel taskModel) {
     );
   } else {
     context.read<HomePageCubit>().editTaskTitle(
-          newTaskText: newTaskTitle,
+          editTaskTitle: newTaskTitle,
           documentID: taskModel.id,
         );
     Navigator.pop(context);
