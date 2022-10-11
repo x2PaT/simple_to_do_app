@@ -88,7 +88,7 @@ class _HomePageState extends State<HomePage> {
                       child: ReorderableListView.builder(
                         itemCount: state.results.length,
                         itemBuilder: (context, index) {
-                          var model = items[index];
+                          var model = state.results[index];
                           return MainListItem(
                               key: ValueKey(model), taskModel: model);
                         },
@@ -98,7 +98,9 @@ class _HomePageState extends State<HomePage> {
                             final item = items.removeAt(oldIndex);
                             items.insert(newIndex, item);
 
-                            context.read<HomePageCubit>().changeOrder(items);
+                            context
+                                .read<HomePageCubit>()
+                                .writeNewOrderToDB(items);
                           });
                         },
                       ),

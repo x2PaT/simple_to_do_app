@@ -4,7 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 
 import 'package:simple_to_do_app/features/home_page/cubit/home_page_cubit.dart';
-import 'package:simple_to_do_app/features/task_details/task_details_page.dart';
+import 'package:simple_to_do_app/features/task_details/details_page.dart';
 import 'package:simple_to_do_app/models/text_card_model.dart';
 import 'export_dialogs.dart';
 
@@ -37,7 +37,10 @@ class MainListItem extends StatelessWidget {
             label: 'Details',
             onPressed: (dialogContext) {
               Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => DetailsPage(taskModel: taskModel),
+                builder: (_) => DetailsPage(
+                  contextFrw: context,
+                  taskModel: taskModel,
+                ),
               ));
             },
           ),
@@ -54,7 +57,10 @@ class MainListItem extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => DetailsPage(taskModel: taskModel),
+            builder: (_) => DetailsPage(
+              contextFrw: context,
+              taskModel: taskModel,
+            ),
           ));
         },
         child: Card(
@@ -65,8 +71,10 @@ class MainListItem extends StatelessWidget {
               children: [
                 Checkbox(
                   onChanged: (bool? value) {
-                    context.read<HomePageCubit>().changeCheckBoxValue(
-                        newcheckboxValue: value!, documentID: taskModel.id);
+                    context.read<HomePageCubit>().editTaskProperties(
+                      newProperties: {'checked': value!},
+                      documentID: taskModel.id,
+                    );
                   },
                   value: taskModel.checked,
                 ),

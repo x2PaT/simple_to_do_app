@@ -20,6 +20,13 @@ class TaskModel {
         description = json['description'],
         creationTime = DateTime.parse(json['creationTime']);
 
+  TaskModel.fromJsonwithID(json, documentID)
+      : id = documentID,
+        checked = json['checked'],
+        title = json['title'],
+        description = json['description'],
+        creationTime = DateTime.parse(json['creationTime']);
+
   Map<String, dynamic> toJson(TaskModel model) {
     return <String, dynamic>{
       'id': model.id,
