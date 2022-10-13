@@ -29,12 +29,14 @@ class _HomePageState extends State<HomePage> {
       },
       child: BlocBuilder<HomePageCubit, HomePageState>(
         builder: (context, state) {
-          final items = state.results;
           switch (state.status) {
             case Status.initial:
             case Status.loading:
-              return const Center(
-                child: CircularProgressIndicator(),
+              return Container(
+                color: Colors.white,
+                child: const Center(
+                  child: CircularProgressIndicator(),
+                ),
               );
             case Status.error:
               return Container(
@@ -86,7 +88,7 @@ class _HomePageState extends State<HomePage> {
                       child: ReorderableListView.builder(
                         itemCount: state.results.length,
                         itemBuilder: (context, index) {
-                          var model = items[index];
+                          var model = state.results[index];
                           return MainListItem(
                               key: ValueKey(model), taskModel: model);
                         },
@@ -96,7 +98,9 @@ class _HomePageState extends State<HomePage> {
                             final item = items.removeAt(oldIndex);
                             items.insert(newIndex, item);
 
-                            context.read<HomePageCubit>().changeOrder(items);
+                            context
+                                .read<HomePageCubit>()
+                                .writeNewOrderToDB(items);
                           });
                         },
                       ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 Future<void> openAddTaskDialog(BuildContext context,
     {required Null Function(String task) onTaskTextChange}) {
-  final taskController = TextEditingController();
+  final titleController = TextEditingController();
   return showDialog(
     context: context,
     builder: (context) => AlertDialog(
@@ -10,17 +10,17 @@ Future<void> openAddTaskDialog(BuildContext context,
       content: TextField(
         textCapitalization: TextCapitalization.words,
         onSubmitted: (value) {
-          onTaskTextChange(taskController.text);
+          onTaskTextChange(titleController.text);
           Navigator.pop(context);
         },
         autofocus: true,
-        controller: taskController,
+        controller: titleController,
         decoration: const InputDecoration(hintText: 'Type your task'),
       ),
       actions: [
         TextButton(
           onPressed: () {
-            if (taskController.text.isEmpty) {
+            if (titleController.text.isEmpty) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text(
@@ -30,7 +30,7 @@ Future<void> openAddTaskDialog(BuildContext context,
                 ),
               );
             } else {
-              onTaskTextChange(taskController.text);
+              onTaskTextChange(titleController.text);
               Navigator.pop(context);
             }
           },

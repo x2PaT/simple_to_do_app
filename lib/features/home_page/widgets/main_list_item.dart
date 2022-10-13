@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:intl/intl.dart';
 
 import 'package:simple_to_do_app/features/home_page/cubit/home_page_cubit.dart';
+import 'package:simple_to_do_app/features/task_details/details_page.dart';
 import 'package:simple_to_do_app/models/text_card_model.dart';
 import 'export_dialogs.dart';
 
@@ -34,7 +36,12 @@ class MainListItem extends StatelessWidget {
             icon: Icons.info,
             label: 'Details',
             onPressed: (dialogContext) {
-              showDetailsDialog(context, taskModel);
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => DetailsPage(
+                  contextFrw: context,
+                  taskModel: taskModel,
+                ),
+              ));
             },
           ),
           SlidableAction(
@@ -49,7 +56,12 @@ class MainListItem extends StatelessWidget {
       ),
       child: GestureDetector(
         onTap: () {
-          showDetailsDialog(context, taskModel);
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) => DetailsPage(
+              contextFrw: context,
+              taskModel: taskModel,
+            ),
+          ));
         },
         child: Card(
           margin: const EdgeInsets.all(10),
@@ -59,19 +71,34 @@ class MainListItem extends StatelessWidget {
               children: [
                 Checkbox(
                   onChanged: (bool? value) {
-                    context.read<HomePageCubit>().changeCheckBoxValue(
-                        newcheckboxValue: value!, documentID: taskModel.id);
+                    context.read<HomePageCubit>().editTaskProperties(
+                      newProperties: {'checked': value!},
+                      documentID: taskModel.id,
+                    );
                   },
                   value: taskModel.checked,
                 ),
-                Text(
-                  taskModel.title,
-                  style: TextStyle(
-                    fontSize: taskModel.checked ? 12 : null,
-                    fontWeight: !taskModel.checked ? FontWeight.bold : null,
-                    decoration:
-                        taskModel.checked ? TextDecoration.lineThrough : null,
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      taskModel.title,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontSize: taskModel.checked ? 12 : null,
+                        fontWeight: !taskModel.checked ? FontWeight.bold : null,
+                        decoration: taskModel.checked
+                            ? TextDecoration.lineThrough
+                            : null,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      DateFormat('dd MMM yyyy - hh:mm:ss')
+                          .format(taskModel.creationTime),
+                      style: const TextStyle(fontSize: 12),
+                    )
+                  ],
                 ),
                 const Spacer(),
                 const Icon(Icons.more_horiz),

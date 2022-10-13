@@ -8,32 +8,52 @@ Future<void> openEditTaskDialog(
   TaskModel taskModel,
 ) {
   final taskController = TextEditingController(text: taskModel.title);
+  final descController = TextEditingController(text: taskModel.description);
   return showDialog(
     context: context,
     builder: (contextBuilder) => AlertDialog(
       title: const Text('Edit task', textAlign: TextAlign.center),
-      content: TextField(
-        textCapitalization: TextCapitalization.words,
-        onSubmitted: (value) {
-          submit(context, taskController.text, taskModel);
-        },
-        autofocus: true,
-        controller: taskController,
-        decoration: const InputDecoration(hintText: 'Change task text'),
+      content: Column(
+        children: [
+          const Text('Title'),
+          TextField(
+            textCapitalization: TextCapitalization.sentences,
+            autofocus: true,
+            controller: taskController,
+            decoration: const InputDecoration(
+              hintText: 'Change task title',
+            ),
+          ),
+          const SizedBox(height: 12),
+          const Text('Description'),
+          TextField(
+            
+            maxLines: 4,
+            textCapitalization: TextCapitalization.sentences,
+            controller: descController,
+            decoration:
+                const InputDecoration(hintText: 'Change task description'),
+          ),
+        ],
       ),
       actions: [
         TextButton(
           onPressed: () {
-            submit(context, taskController.text, taskModel);
+            submit(
+              context,
+              taskModel.id,
+              taskController.text,
+              descController.text,
+            );
           },
-          child: const Text('Edit'),
+          child: const Text('Save'),
         )
       ],
     ),
   );
 }
 
-void submit(BuildContext context, newTaskTitle, TaskModel taskModel) {
+void submit(BuildContext context, documentID, newTaskTitle, newDescription) {
   if (newTaskTitle.isEmpty) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -44,10 +64,13 @@ void submit(BuildContext context, newTaskTitle, TaskModel taskModel) {
       ),
     );
   } else {
-    context.read<HomePageCubit>().editTaskTitle(
-          newTaskText: newTaskTitle,
-          documentID: taskModel.id,
-        );
+    context.read<HomePageCubit>().editTaskProperties(
+      newProperties: {
+        'title': newTaskTitle,
+        'description': newDescription,
+      },
+      documentID: documentID,
+    );
     Navigator.pop(context);
   }
 }

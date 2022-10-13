@@ -14,14 +14,13 @@ class ItemsRepository {
     return randomInt.toRadixString(16);
   }
 
-
   Stream<List<TaskModel>> getItemStream() {
     final userID = FirebaseAuth.instance.currentUser?.uid;
     if (userID == null) {
       throw Exception('User is not loged in');
     }
 
-    Stream<List<TaskModel>> result = FirebaseFirestore.instance
+    Stream<List<TaskModel>> items = FirebaseFirestore.instance
         .collection('users')
         .doc(userID)
         .collection('items')
@@ -32,40 +31,46 @@ class ItemsRepository {
       }).toList();
     });
 
-    return result;
+    return items;
   }
 
-  Future<List> getOrder() async {
+  Stream<TaskModel> readTask(documentID) {
     final userID = FirebaseAuth.instance.currentUser?.uid;
     if (userID == null) {
       throw Exception('User is not loged in');
     }
 
-    final data = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userID)
-        .get()
-        .then((DocumentSnapshot doc) => doc.data() as Map<String, dynamic>);
-
-    return data['order'] as List;
-  }
-
-  void changeCheckBoxValue(bool newcheckboxValue, String documentID) {
-    final data = {'checked': newcheckboxValue};
-    final userID = FirebaseAuth.instance.currentUser?.uid;
-    if (userID == null) {
-      throw Exception('User is not loged in');
-    }
-    FirebaseFirestore.instance
+    final data = FirebaseFirestore.instance
         .collection('users')
         .doc(userID)
         .collection('items')
         .doc(documentID)
-        .set(data, SetOptions(merge: true));
+        .snapshots()
+        .map((DocumentSnapshot doc) => doc.data() as Map<String, dynamic>)
+        .map((doc) => TaskModel.fromJsonwithID(doc, documentID));
+
+    return data;
+  }
+
+  Stream<Map<String, dynamic>> getOrder() {
+    final userID = FirebaseAuth.instance.currentUser?.uid;
+    if (userID == null) {
+      throw Exception('User is not loged in');
+    }
+
+    final order = FirebaseFirestore.instance
+        .collection('users')
+        .doc(userID)
+        .snapshots()
+        .map((DocumentSnapshot doc) => doc.data() as Map<String, dynamic>);
+
+    return order;
   }
 
   Future<void> addNewTask(String task, String description) async {
     final userID = FirebaseAuth.instance.currentUser?.uid;
+    final creationTime = DateTime.now();
+
     if (userID == null) {
       throw Exception('User is not loged in');
     }
@@ -73,6 +78,7 @@ class ItemsRepository {
       'checked': false,
       'title': task,
       'description': description,
+      'creationTime': creationTime.toString()
     };
 
     final newTask = await FirebaseFirestore.instance
@@ -86,21 +92,25 @@ class ItemsRepository {
     });
   }
 
-  Future<void> deleteTask({String? documentID}) {
+  Future<void> deleteTask({String? documentID}) async {
     final userID = FirebaseAuth.instance.currentUser?.uid;
     if (userID == null) {
       throw Exception('User is not loged in');
     }
-    return FirebaseFirestore.instance
+
+    await FirebaseFirestore.instance
         .collection('users')
         .doc(userID)
         .collection('items')
         .doc(documentID)
         .delete();
+    await FirebaseFirestore.instance.collection('users').doc(userID).update({
+      'order': FieldValue.arrayRemove([documentID])
+    });
   }
 
-  void editTaskTitle(String newTaskTitle, String documentID) {
-    final title = {'title': newTaskTitle};
+  void editTaskProperties(
+      Map<String, dynamic> newProperties, String documentID) {
     final userID = FirebaseAuth.instance.currentUser?.uid;
     if (userID == null) {
       throw Exception('User is not loged in');
@@ -110,24 +120,10 @@ class ItemsRepository {
         .doc(userID)
         .collection('items')
         .doc(documentID)
-        .set(title, SetOptions(merge: true));
+        .set(newProperties, SetOptions(merge: true));
   }
 
-  void editTaskDescription(String newTaskDescription, String documentID) {
-    final description = {'description': newTaskDescription};
-    final userID = FirebaseAuth.instance.currentUser?.uid;
-    if (userID == null) {
-      throw Exception('User is not loged in');
-    }
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(userID)
-        .collection('items')
-        .doc(documentID)
-        .set(description, SetOptions(merge: true));
-  }
-
-  Future<void> reorderTasks(List newOrder) async {
+  Future<void> writeNewOrderToDB(List newOrder) async {
     final data = {'order': newOrder};
     final userID = FirebaseAuth.instance.currentUser?.uid;
     if (userID == null) {

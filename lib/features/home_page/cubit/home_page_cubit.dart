@@ -13,8 +13,8 @@ class HomePageCubit extends Cubit<HomePageState> {
     this._itemsRepository,
   ) : super(const HomePageState());
 
-  StreamSubscription? _streamSubscription;
-  // StreamSubscription? _streamSubscription2;
+  StreamSubscription? _streamSubscriptionItems;
+  StreamSubscription? _streamSubscriptionOrder;
   final ItemsRepository _itemsRepository;
 
   Future<void> start() async {
@@ -24,27 +24,27 @@ class HomePageCubit extends Cubit<HomePageState> {
       ),
     );
 
-    final idsOrder = await _itemsRepository.getOrder();
-
-    _streamSubscription = _itemsRepository.getItemStream().listen(
+    _streamSubscriptionItems = _itemsRepository.getItemStream().listen(
       (items) {
-        //reorder items acording to idsOrder List
-        List<TaskModel> orderedResult = [];
+        _streamSubscriptionOrder = _itemsRepository.getOrder().listen((order) {
+          final idsOrder = order['order'];
 
-        for (var id in idsOrder) {
-          for (var item in items) {
-            if (item.id == id) {
-              orderedResult.add(item);
+          List<TaskModel> orderedResult = [];
+
+          for (var id in idsOrder) {
+            for (var item in items) {
+              if (item.id == id) {
+                orderedResult.add(item);
+              }
             }
           }
-        }
-
-        emit(
-          HomePageState(
-            results: orderedResult,
-            status: Status.success,
-          ),
-        );
+          emit(
+            HomePageState(
+              results: orderedResult,
+              status: Status.success,
+            ),
+          );
+        });
       },
     )..onError(
         (error) {
@@ -82,14 +82,14 @@ class HomePageCubit extends Cubit<HomePageState> {
           errorMessage: error.toString(),
         ),
       );
-      start();
     }
   }
 
-  Future<void> editTaskTitle(
-      {required String newTaskText, required String documentID}) async {
+  Future<void> editTaskProperties(
+      {required Map<String, dynamic> newProperties,
+      required String documentID}) async {
     try {
-      _itemsRepository.editTaskTitle(newTaskText, documentID);
+      _itemsRepository.editTaskProperties(newProperties, documentID);
     } catch (error) {
       emit(
         HomePageState(
@@ -100,43 +100,14 @@ class HomePageCubit extends Cubit<HomePageState> {
     }
   }
 
-  Future<void> editTaskDescription(
-      {required String newTaskDescription, required String documentID}) async {
-    try {
-      _itemsRepository.editTaskDescription(newTaskDescription, documentID);
-    } catch (error) {
-      emit(
-        HomePageState(
-          status: Status.error,
-          errorMessage: error.toString(),
-        ),
-      );
-    }
-  }
-
-  Future<void> changeCheckBoxValue(
-      {required bool newcheckboxValue, required String documentID}) async {
-    try {
-      await Future.delayed(const Duration(milliseconds: 100));
-      _itemsRepository.changeCheckBoxValue(newcheckboxValue, documentID);
-    } catch (error) {
-      emit(
-        HomePageState(
-          status: Status.error,
-          errorMessage: error.toString(),
-        ),
-      );
-    }
-  }
-
-  Future<void> changeOrder(List<TaskModel> items) async {
+  Future<void> writeNewOrderToDB(List<TaskModel> items) async {
     List newOrder = [];
     for (var element in items) {
       newOrder.add(element.id);
     }
 
     try {
-      await _itemsRepository.reorderTasks(newOrder);
+      await _itemsRepository.writeNewOrderToDB(newOrder);
     } catch (error) {
       emit(
         HomePageState(
@@ -146,9 +117,12 @@ class HomePageCubit extends Cubit<HomePageState> {
       );
     }
   }
+
   @override
   Future<void> close() {
-    _streamSubscription?.cancel();
+    _streamSubscriptionItems?.cancel();
+    _streamSubscriptionOrder?.cancel();
+
     return super.close();
   }
 }
