@@ -38,8 +38,7 @@ class MainListItem extends StatelessWidget {
             onPressed: (dialogContext) {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (_) => DetailsPage(
-                  contextFrw: context,
-                  taskModel: taskModel,
+                  taskID: taskModel.id,
                 ),
               ));
             },
@@ -58,8 +57,7 @@ class MainListItem extends StatelessWidget {
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
             builder: (_) => DetailsPage(
-              contextFrw: context,
-              taskModel: taskModel,
+              taskID: taskModel.id,
             ),
           ));
         },

@@ -34,7 +34,7 @@ class ItemsRepository {
     return items;
   }
 
-  Stream<TaskModel> readTask(documentID) {
+  Stream<TaskModel> getSingleTask(documentID) {
     final userID = FirebaseAuth.instance.currentUser?.uid;
     if (userID == null) {
       throw Exception('User is not loged in');

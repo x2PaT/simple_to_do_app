@@ -71,7 +71,6 @@ class HomePageCubit extends Cubit<HomePageState> {
     }
   }
 
-//change checkbox
   Future<void> removeItem({required String documentID}) async {
     try {
       await _itemsRepository.deleteTask(documentID: documentID);
