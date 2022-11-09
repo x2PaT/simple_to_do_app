@@ -84,27 +84,44 @@ class _HomePageState extends State<HomePage> {
                 ),
                 body: Column(
                   children: [
-                    Expanded(
-                      child: ReorderableListView.builder(
-                        itemCount: state.results.length,
-                        itemBuilder: (context, index) {
-                          var model = state.results[index];
-                          return MainListItem(
-                              key: ValueKey(model), taskModel: model);
-                        },
-                        onReorder: (int oldIndex, int newIndex) {
-                          setState(() {
-                            if (newIndex > oldIndex) newIndex--;
-                            final item = items.removeAt(oldIndex);
-                            items.insert(newIndex, item);
+                    state.results.isEmpty
+                        ? Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Center(
+                                  child: Text(
+                                    'Add first task!',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Expanded(
+                            child: ReorderableListView.builder(
+                              itemCount: state.results.length,
+                              itemBuilder: (context, index) {
+                                var model = state.results[index];
+                                return MainListItem(
+                                    key: ValueKey(model), taskModel: model);
+                              },
+                              onReorder: (int oldIndex, int newIndex) {
+                                setState(() {
+                                  if (newIndex > oldIndex) newIndex--;
+                                  final item = items.removeAt(oldIndex);
+                                  items.insert(newIndex, item);
 
-                            context
-                                .read<HomePageCubit>()
-                                .writeNewOrderToDB(items);
-                          });
-                        },
-                      ),
-                    )
+                                  context
+                                      .read<HomePageCubit>()
+                                      .writeNewOrderToDB(items);
+                                });
+                              },
+                            ),
+                          )
                   ],
                 ),
               );

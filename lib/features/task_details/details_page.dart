@@ -119,29 +119,29 @@ class DetailsPage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade300,
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(15),
-                          ),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                'Notification',
-                                style: TextStyle(fontSize: 14),
-                              ),
-                            ),
-                            SizedBox(height: 5),
-                          ],
-                        ),
-                      ),
+                      // Container(
+                      //   width: double.infinity,
+                      //   padding: const EdgeInsets.all(12),
+                      //   decoration: BoxDecoration(
+                      //     color: Colors.grey.shade300,
+                      //     borderRadius: const BorderRadius.all(
+                      //       Radius.circular(15),
+                      //     ),
+                      //   ),
+                      //   child: Column(
+                      //     crossAxisAlignment: CrossAxisAlignment.start,
+                      //     children: const [
+                      //       Align(
+                      //         alignment: Alignment.center,
+                      //         child: Text(
+                      //           'Notification',
+                      //           style: TextStyle(fontSize: 14),
+                      //         ),
+                      //       ),
+                      //       SizedBox(height: 5),
+                      //     ],
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),

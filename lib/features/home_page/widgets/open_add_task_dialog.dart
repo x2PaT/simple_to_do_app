@@ -8,7 +8,7 @@ Future<void> openAddTaskDialog(BuildContext context,
     builder: (context) => AlertDialog(
       title: const Text('Add task', textAlign: TextAlign.center),
       content: TextField(
-        textCapitalization: TextCapitalization.words,
+        textCapitalization: TextCapitalization.sentences,
         onSubmitted: (value) {
           onTaskTextChange(titleController.text);
           Navigator.pop(context);
